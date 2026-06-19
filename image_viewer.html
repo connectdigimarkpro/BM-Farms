@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BM Farms - Image Viewer & Categorizer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #e5e5e5;
+    }
+  </style>
+</head>
+<body class="p-6">
+  <header class="mb-8 border-b border-gray-700 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-green-500">BM Farms Image Categorizer</h1>
+      <p class="text-gray-400 mt-1">Review the 90 raw WhatsApp images, assign categories, and export the JSON mapping.</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <button id="btn-export" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-md flex items-center gap-2 transition font-semibold">
+        <i class="fa-solid fa-download"></i> Export JSON Mapping
+      </button>
+      <button id="btn-load" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md flex items-center gap-2 transition font-semibold">
+        <i class="fa-solid fa-upload"></i> Load JSON Mapping
+      </button>
+      <button id="btn-stats" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-md flex items-center gap-2 transition font-semibold">
+        <i class="fa-solid fa-chart-simple"></i> View Stats
+      </button>
+    </div>
+  </header>
+
+  <!-- Control & Filter Bar -->
+  <section class="bg-gray-800 p-4 rounded-xl mb-6 flex flex-wrap gap-4 items-center justify-between">
+    <div class="flex flex-wrap gap-4 items-center">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Filter by Category</label>
+        <select id="filter-category" class="bg-gray-700 border border-gray-600 text-white rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="all">All Images</option>
+          <option value="unassigned">Unassigned</option>
+          <option value="Farm Exterior">Farm Exterior</option>
+          <option value="Poultry Sheds">Poultry Sheds</option>
+          <option value="Automatic Feeding System">Automatic Feeding System</option>
+          <option value="Water System">Water System</option>
+          <option value="Honeycomb Cooling Pads">Honeycomb Cooling Pads</option>
+          <option value="Feed Silos">Feed Silos</option>
+          <option value="Bird Management">Bird Management</option>
+          <option value="Infrastructure">Infrastructure</option>
+          <option value="Equipment">Equipment</option>
+          <option value="Daily Operations">Daily Operations</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Search Filename</label>
+        <input type="text" id="search-filename" placeholder="e.g. (12)" class="bg-gray-700 border border-gray-600 text-white rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 w-48">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1">Sort Order</label>
+        <select id="sort-order" class="bg-gray-700 border border-gray-600 text-white rounded px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="name-asc">Filename (A-Z)</option>
+          <option value="name-desc">Filename (Z-A)</option>
+        </select>
+      </div>
+    </div>
+    <div class="text-sm text-gray-300 bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700">
+      Progress: <span id="progress-count" class="font-bold text-green-400">0</span> / <span id="total-count">90</span> categorized
+    </div>
+  </section>
+
+  <!-- Main Grid -->
+  <main id="images-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <!-- Image Card Boilerplate (Inserted by JS) -->
+  </main>
+
+  <!-- Export Dialog Modal -->
+  <div id="modal-export" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-gray-800 rounded-xl max-w-2xl w-full p-6 border border-gray-700 shadow-2xl flex flex-col h-[80vh]">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-700">
+        <h3 class="text-xl font-semibold text-green-400">JSON Categorization Export</h3>
+        <button id="btn-close-export" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <p class="text-sm text-gray-300 mb-2">Copy this JSON and save it. We will use this in the final `index.html` file to power the gallery and catalog search.</p>
+      <textarea id="export-textarea" class="flex-grow w-full bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4 resize-none" readonly></textarea>
+      <div class="flex justify-end gap-3">
+        <button id="btn-copy-export" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition font-semibold">
+          <i class="fa-solid fa-copy"></i> Copy to Clipboard
+        </button>
+        <button id="btn-download-json" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold">
+          <i class="fa-solid fa-file-arrow-down"></i> Download .json File
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Dialog Modal -->
+  <div id="modal-load" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-gray-800 rounded-xl max-w-2xl w-full p-6 border border-gray-700 shadow-2xl flex flex-col h-[50vh]">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-700">
+        <h3 class="text-xl font-semibold text-blue-400">Load JSON Categorization</h3>
+        <button id="btn-close-load" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <p class="text-sm text-gray-300 mb-2">Paste your categorization JSON here to restore your previous progress.</p>
+      <textarea id="load-textarea" placeholder='[{"filename":"WhatsApp Image...","category":"Farm Exterior","title":"Farm Main Gate","desc":"..."}]' class="flex-grow w-full bg-gray-900 text-blue-400 font-mono text-xs p-4 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 resize-none"></textarea>
+      <div class="flex justify-end gap-3">
+        <button id="btn-apply-load" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition font-semibold">
+          Apply JSON
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="modal-stats" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center hidden z-50 p-4">
+    <div class="bg-gray-800 rounded-xl max-w-md w-full p-6 border border-gray-700 shadow-2xl flex flex-col">
+      <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-700">
+        <h3 class="text-xl font-semibold text-purple-400">Category Statistics</h3>
+        <button id="btn-close-stats" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <div id="stats-content" class="space-y-3">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/images-data.js"></script>
+  <script>
+    // Local storage key
+    const STORAGE_KEY = 'bm_farms_image_classifications';
+
+    // Categories
+    const CATEGORIES = [
+      "Farm Exterior",
+      "Poultry Sheds",
+      "Automatic Feeding System",
+      "Water System",
+      "Honeycomb Cooling Pads",
+      "Feed Silos",
+      "Bird Management",
+      "Infrastructure",
+      "Equipment",
+      "Daily Operations"
+    ];
+
+    // Load initial classification map from localStorage or create empty
+    let classifications = {};
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        classifications = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error("Error reading from localStorage", e);
+    }
+
+    // Initialize state
+    // Each image item has: { filename, category: "", title: "", desc: "" }
+    let data = IMAGES.map(filename => {
+      const saved = classifications[filename] || {};
+      return {
+        filename: filename,
+        category: saved.category || '',
+        title: saved.title || '',
+        desc: saved.desc || ''
+      };
+    });
+
+    const grid = document.getElementById('images-grid');
+    const filterCat = document.getElementById('filter-category');
+    const searchFilename = document.getElementById('search-filename');
+    const sortOrder = document.getElementById('sort-order');
+    const progressCount = document.getElementById('progress-count');
+    const totalCount = document.getElementById('total-count');
+
+    // Update counts
+    function updateProgress() {
+      const count = data.filter(item => item.category !== '').length;
+      progressCount.textContent = count;
+      totalCount.textContent = data.length;
+    }
+
+    // Save current classifications to localStorage
+    function saveToLocalStorage() {
+      const exportData = {};
+      data.forEach(item => {
+        if (item.category) {
+          exportData[item.filename] = {
+            category: item.category,
+            title: item.title,
+            desc: item.desc
+          };
+        }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(exportData));
+    }
+
+    // Render grid
+    function render() {
+      const filter = filterCat.value;
+      const search = searchFilename.value.toLowerCase().trim();
+      const sort = sortOrder.value;
+
+      // Filter
+      let filtered = data.filter(item => {
+        // Category filter
+        if (filter === 'unassigned') {
+          if (item.category !== '') return false;
+        } else if (filter !== 'all') {
+          if (item.category !== filter) return false;
+        }
+
+        // Search filter
+        if (search) {
+          if (!item.filename.toLowerCase().includes(search) &&
+              !item.title.toLowerCase().includes(search) &&
+              !item.desc.toLowerCase().includes(search)) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      // Sort
+      filtered.sort((a, b) => {
+        if (sort === 'name-asc') {
+          return a.filename.localeCompare(b.filename);
+        } else {
+          return b.filename.localeCompare(a.filename);
+        }
+      });
+
+      grid.innerHTML = '';
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-gray-500 bg-gray-800 rounded-xl">
+            <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+            <p class="text-lg">No matching images found</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-gray-800 rounded-xl overflow-hidden border border-gray-700 flex flex-col hover:border-gray-500 transition-all shadow-lg";
+        
+        // Options for category
+        const optionsHtml = CATEGORIES.map(cat => 
+          `<option value="${cat}" ${item.category === cat ? 'selected' : ''}>${cat}</option>`
+        ).join('');
+
+        const imgSrc = `assets/images/${encodeURIComponent(item.filename)}`;
+
+        card.innerHTML = `
+          <div class="relative bg-black h-48 flex items-center justify-center overflow-hidden group">
+            <img class="object-cover w-full h-full lazy-img group-hover:scale-105 transition duration-300" src="${imgSrc}" alt="${item.filename}" loading="lazy">
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <a href="${imgSrc}" target="_blank" class="px-3 py-1.5 bg-gray-900 text-white rounded text-xs flex items-center gap-1 hover:bg-gray-700">
+                <i class="fa-solid fa-expand"></i> Open Fullsize
+              </a>
+            </div>
+          </div>
+          <div class="p-4 flex-grow flex flex-col justify-between">
+            <div>
+              <p class="text-xs text-gray-400 truncate mb-2 font-mono" title="${item.filename}">${item.filename}</p>
+              
+              <div class="mb-3">
+                <label class="block text-xs text-gray-400 mb-1">Category</label>
+                <select class="w-full bg-gray-750 bg-gray-900 border border-gray-600 rounded px-2.5 py-1 text-sm text-white focus:ring-1 focus:ring-green-500 select-cat-btn" data-filename="${item.filename}">
+                  <option value="">-- Unassigned --</option>
+                  ${optionsHtml}
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="block text-xs text-gray-400 mb-1">Title</label>
+                <input type="text" class="w-full bg-gray-900 border border-gray-600 rounded px-2.5 py-1 text-sm text-white focus:ring-1 focus:ring-green-500 input-title" data-filename="${item.filename}" value="${item.title.replace(/"/g, '&quot;')}" placeholder="e.g. Feeding System Pipes">
+              </div>
+
+              <div class="mb-3">
+                <label class="block text-xs text-gray-400 mb-1">Description (Optional)</label>
+                <textarea class="w-full bg-gray-900 border border-gray-600 rounded px-2.5 py-1 text-xs text-white focus:ring-1 focus:ring-green-500 input-desc resize-y h-16" data-filename="${item.filename}" placeholder="Details...">${item.desc}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Bind input events
+      grid.querySelectorAll('.select-cat-btn').forEach(select => {
+        select.addEventListener('change', (e) => {
+          const fname = e.target.getAttribute('data-filename');
+          const val = e.target.value;
+          const found = data.find(i => i.filename === fname);
+          if (found) {
+            found.category = val;
+            saveToLocalStorage();
+            updateProgress();
+          }
+        });
+      });
+
+      grid.querySelectorAll('.input-title').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const fname = e.target.getAttribute('data-filename');
+          const val = e.target.value;
+          const found = data.find(i => i.filename === fname);
+          if (found) {
+            found.title = val;
+            saveToLocalStorage();
+          }
+        });
+      });
+
+      grid.querySelectorAll('.input-desc').forEach(textarea => {
+        textarea.addEventListener('change', (e) => {
+          const fname = e.target.getAttribute('data-filename');
+          const val = e.target.value;
+          const found = data.find(i => i.filename === fname);
+          if (found) {
+            found.desc = val;
+            saveToLocalStorage();
+          }
+        });
+      });
+    }
+
+    // Filter, search, sort events
+    filterCat.addEventListener('change', render);
+    searchFilename.addEventListener('input', render);
+    sortOrder.addEventListener('change', render);
+
+    // Export Modal Controls
+    const exportModal = document.getElementById('modal-export');
+    const exportTextarea = document.getElementById('export-textarea');
+    document.getElementById('btn-export').addEventListener('click', () => {
+      // Export only categorized images
+      const categorized = data.filter(item => item.category !== '');
+      exportTextarea.value = JSON.stringify(categorized, null, 2);
+      exportModal.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-export').addEventListener('click', () => {
+      exportModal.classList.add('hidden');
+    });
+
+    document.getElementById('btn-copy-export').addEventListener('click', () => {
+      exportTextarea.select();
+      document.execCommand('copy');
+      alert('Copied to clipboard!');
+    });
+
+    document.getElementById('btn-download-json').addEventListener('click', () => {
+      const categorized = data.filter(item => item.category !== '');
+      const blob = new Blob([JSON.stringify(categorized, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bm-farms-categorized-images.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Load Modal Controls
+    const loadModal = document.getElementById('modal-load');
+    const loadTextarea = document.getElementById('load-textarea');
+    document.getElementById('btn-load').addEventListener('click', () => {
+      loadModal.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-load').addEventListener('click', () => {
+      loadModal.classList.add('hidden');
+    });
+
+    document.getElementById('btn-apply-load').addEventListener('click', () => {
+      try {
+        const inputVal = loadTextarea.value.trim();
+        if (!inputVal) return;
+        const parsed = JSON.parse(inputVal);
+        if (!Array.isArray(parsed)) {
+          alert('JSON must be an array of image objects.');
+          return;
+        }
+
+        // Apply
+        parsed.forEach(parsedItem => {
+          const found = data.find(item => item.filename === parsedItem.filename);
+          if (found) {
+            found.category = parsedItem.category || '';
+            found.title = parsedItem.title || '';
+            found.desc = parsedItem.desc || '';
+          }
+        });
+
+        saveToLocalStorage();
+        updateProgress();
+        render();
+        loadModal.classList.add('hidden');
+        loadTextarea.value = '';
+        alert('JSON loaded and applied successfully!');
+      } catch (err) {
+        alert('Invalid JSON: ' + err.message);
+      }
+    });
+
+    // Stats Modal Controls
+    const statsModal = document.getElementById('modal-stats');
+    const statsContent = document.getElementById('stats-content');
+    document.getElementById('btn-stats').addEventListener('click', () => {
+      const counts = {};
+      CATEGORIES.forEach(c => counts[c] = 0);
+      counts['Unassigned'] = 0;
+
+      data.forEach(item => {
+        if (item.category) {
+          counts[item.category] = (counts[item.category] || 0) + 1;
+        } else {
+          counts['Unassigned'] = (counts['Unassigned'] || 0) + 1;
+        }
+      });
+
+      statsContent.innerHTML = '';
+      
+      const allKeys = [...CATEGORIES, 'Unassigned'];
+      allKeys.forEach(k => {
+        const isUnassigned = k === 'Unassigned';
+        const colorClass = isUnassigned ? 'text-gray-400' : 'text-green-400 font-semibold';
+        const pct = ((counts[k] / data.length) * 100).toFixed(1);
+        
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between text-sm py-1 border-b border-gray-750";
+        row.innerHTML = `
+          <span class="${colorClass}">${k}</span>
+          <div class="flex items-center gap-3">
+            <span class="text-gray-300 font-mono">${counts[k]}</span>
+            <span class="text-gray-500 font-mono text-xs w-10 text-right">${pct}%</span>
+          </div>
+        `;
+        statsContent.appendChild(row);
+      });
+
+      statsModal.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-stats').addEventListener('click', () => {
+      statsModal.classList.add('hidden');
+    });
+
+    // Initial load
+    updateProgress();
+    render();
+  </script>
+</body>
+</html>
