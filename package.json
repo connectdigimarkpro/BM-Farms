@@ -1,0 +1,12 @@
+{
+  "name": "bm-farms",
+  "version": "1.0.0",
+  "description": "BM Farms website",
+  "main": "index.html",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/tailwind-input.css -o ./assets/css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

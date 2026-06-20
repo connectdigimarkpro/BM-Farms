@@ -30,29 +30,8 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Tailwind CSS CDN -->
-  <script defer src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            emerald: {
-              850: '#154b2f',
-              950: '#0b2618',
-            },
-            primary: '#1F5E3B',
-            secondary: '#8B5E3C',
-            accent: '#C9A227',
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Outfit', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Compiled Tailwind CSS -->
+  <link rel="stylesheet" href="assets/css/tailwind.css">
   
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
@@ -102,16 +81,16 @@
     </div>
 
     <!-- Mobile Navigation Drawer -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 px-4 py-4 space-y-3 font-semibold text-gray-750">
-      <a href="#home" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Home</a>
-      <a href="#about" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">About</a>
-      <a href="#operations" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Farm Operations</a>
-      <a href="#infrastructure" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Infrastructure</a>
-      <a href="#timeline" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Timeline</a>
-      <a href="#gallery" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Gallery</a>
-      <a href="#contact" class="block py-2 px-3 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Contact</a>
-      <a href="tel:9041090628" class="block py-3 px-3 text-center bg-emerald-800 text-white rounded-xl font-bold shadow-md transition">
-        <i class="fa-solid fa-phone text-xs mr-1"></i> Call Now
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-100 px-4 py-4 space-y-3 font-semibold text-gray-750 text-lg">
+      <a href="#home" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Home</a>
+      <a href="#about" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">About</a>
+      <a href="#operations" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Farm Operations</a>
+      <a href="#infrastructure" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Infrastructure</a>
+      <a href="#timeline" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Timeline</a>
+      <a href="#gallery" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Gallery</a>
+      <a href="#contact" class="block py-3 px-4 hover:bg-emerald-50 hover:text-emerald-800 rounded-lg transition">Contact</a>
+      <a href="tel:9041090628" class="block py-3.5 px-4 text-center bg-emerald-800 text-white rounded-xl font-bold shadow-md transition text-lg">
+        <i class="fa-solid fa-phone text-sm mr-1"></i> Call Now
       </a>
     </div>
   </header>
@@ -372,23 +351,18 @@
         <span class="text-sm font-bold text-emerald-800 uppercase tracking-wider">Our Infrastructure</span>
         <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-gray-900 mt-3">High-Tech Facilities & Equipment Systems</h2>
         <div class="w-16 h-1 bg-emerald-800 mx-auto mt-6 rounded-full"></div>
-      </di      <!-- Grid of Cards -->
+      </div> <!-- Grid of Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Item 1 (Featured with Image) -->
-        <div class="bg-white rounded-3xl shadow-md border border-gray-100 hover-lift overflow-hidden flex flex-col justify-between" data-aos="fade-up" data-aos-delay="0">
-          <div class="h-48 overflow-hidden bg-gray-50">
-            <img src="assets/images/WhatsApp Image 2026-06-18 at 12.38.34 (2).jpeg" alt="Automated Feeding System" class="w-full h-full object-cover">
-          </div>
-          <div class="p-8 flex-grow flex flex-col justify-between">
-            <div>
-              <div class="h-10 w-10 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fa-solid fa-arrows-turn-to-dots text-lg"></i>
-              </div>
-              <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Fully Automated Feeding System</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                Sensor-controlled line distribution feeding trays that automatically feed birds based on age-weight curves.
-              </p>
+        <!-- Item 1 -->
+        <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 hover-lift flex flex-col justify-between" data-aos="fade-up" data-aos-delay="0">
+          <div>
+            <div class="h-12 w-12 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
+              <i class="fa-solid fa-arrows-turn-to-dots text-xl"></i>
             </div>
+            <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Fully Automated Feeding System</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">
+              Sensor-controlled line distribution feeding trays that automatically feed birds based on age-weight curves.
+            </p>
           </div>
         </div>
 
@@ -405,21 +379,16 @@
           </div>
         </div>
 
-        <!-- Item 3 (Featured with Image) -->
-        <div class="bg-white rounded-3xl shadow-md border border-gray-100 hover-lift overflow-hidden flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
-          <div class="h-48 overflow-hidden bg-gray-50">
-            <img src="assets/images/WhatsApp Image 2026-06-18 at 12.42.59.jpeg" alt="Automatic Temperature Control" class="w-full h-full object-cover">
-          </div>
-          <div class="p-8 flex-grow flex flex-col justify-between">
-            <div>
-              <div class="h-10 w-10 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fa-solid fa-temperature-arrow-down text-lg"></i>
-              </div>
-              <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Automatic Temperature Control</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                Centralized TempTron electronic panel coordinates heating lamps, ventilation fans, and water pumps for uniform shed heat.
-              </p>
+        <!-- Item 3 -->
+        <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 hover-lift flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
+          <div>
+            <div class="h-12 w-12 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
+              <i class="fa-solid fa-temperature-arrow-down text-xl"></i>
             </div>
+            <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Automatic Temperature Control</h3>
+            <p class="text-xs text-gray-550 leading-relaxed">
+              Centralized TempTron electronic panel coordinates heating lamps, ventilation fans, and water pumps for uniform shed heat.
+            </p>
           </div>
         </div>
 
@@ -449,21 +418,16 @@
           </div>
         </div>
 
-        <!-- Item 6 (Featured with Image) -->
-        <div class="bg-white rounded-3xl shadow-md border border-gray-100 hover-lift overflow-hidden flex flex-col justify-between" data-aos="fade-up" data-aos-delay="250">
-          <div class="h-48 overflow-hidden bg-gray-50">
-            <img src="assets/images/WhatsApp Image 2026-06-18 at 12.38.34 (15).jpeg" alt="Honeycomb Cooling Pads" class="w-full h-full object-cover">
-          </div>
-          <div class="p-8 flex-grow flex flex-col justify-between">
-            <div>
-              <div class="h-10 w-10 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fa-solid fa-wind text-lg"></i>
-              </div>
-              <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Honeycomb Cooling Pads</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                Cellulose evaporative cooling cell wall pads filter incoming air draft and reduce temperature by 5-10°C during hot summers.
-              </p>
+        <!-- Item 6 -->
+        <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 hover-lift flex flex-col justify-between" data-aos="fade-up" data-aos-delay="250">
+          <div>
+            <div class="h-12 w-12 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
+              <i class="fa-solid fa-wind text-xl"></i>
             </div>
+            <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Honeycomb Cooling Pads</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">
+              Cellulose evaporative cooling cell wall pads filter incoming air draft and reduce temperature by 5-10°C during hot summers.
+            </p>
           </div>
         </div>
 
@@ -480,21 +444,16 @@
           </div>
         </div>
 
-        <!-- Item 8 (Featured with Image) -->
-        <div class="bg-white rounded-3xl shadow-md border border-gray-100 hover-lift overflow-hidden flex flex-col justify-between" data-aos="fade-up" data-aos-delay="350">
-          <div class="h-48 overflow-hidden bg-gray-50">
-            <img src="assets/images/WhatsApp Image 2026-06-18 at 12.42.13 (22).jpeg" alt="Climate-Controlled Poultry Houses" class="w-full h-full object-cover">
-          </div>
-          <div class="p-8 flex-grow flex flex-col justify-between">
-            <div>
-              <div class="h-10 w-10 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fa-solid fa-house-laptop text-lg"></i>
-              </div>
-              <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Climate-Controlled Poultry Houses</h3>
-              <p class="text-xs text-gray-500 leading-relaxed">
-                Fully enclosed multi-story concrete structures insulated to block ambient environmental temperature variations.
-              </p>
+        <!-- Item 8 -->
+        <div class="bg-white p-8 rounded-3xl shadow-md border border-gray-100 hover-lift flex flex-col justify-between" data-aos="fade-up" data-aos-delay="350">
+          <div>
+            <div class="h-12 w-12 text-emerald-800 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
+              <i class="fa-solid fa-house-laptop text-xl"></i>
             </div>
+            <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Climate-Controlled Poultry Houses</h3>
+            <p class="text-xs text-gray-500 leading-relaxed">
+              Fully enclosed multi-story concrete structures insulated to block ambient environmental temperature variations.
+            </p>
           </div>
         </div>
 
@@ -518,7 +477,7 @@
               <i class="fa-solid fa-droplet text-xl"></i>
             </div>
             <h3 class="text-lg font-bold font-display text-gray-900 mb-2">Clean Water Supply</h3>
-            <p class="text-xs text-gray-500 leading-relaxed">
+            <p class="text-xs text-gray-550 leading-relaxed">
               Dedicated borehole water source equipped with physical sediment filters and chemical purification systems.
             </p>
           </div>
